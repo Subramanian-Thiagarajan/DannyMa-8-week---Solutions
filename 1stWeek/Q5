@@ -1,0 +1,16 @@
+-- 5. Which item was the most popular for each customer?
+
+WITH ranked_fav AS (
+SELECT
+    customer_id,
+    product_id,
+    COUNT(product_id),
+    DENSE_RANK() OVER(PARTITION BY customer_id ORDER BY COUNT(customer_id) DESC) AS dr
+FROM dannys_diner.sales
+GROUP BY 1, 2
+)
+
+SELECT customer_id, product_name FROM ranked_fav r
+JOIN dannys_diner.menu m
+ON r.product_id = m.product_id
+WHERE dr=1;
